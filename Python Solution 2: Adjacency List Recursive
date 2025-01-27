@@ -1,0 +1,26 @@
+class Solution:
+    def checkIfPrerequisite(self, numCourses: int, prerequisites: List[List[int]], queries: List[List[int]]) -> List[bool]:
+        prereq_map = [set() for _ in range(numCourses)]
+        
+        def helper(course):
+            if prereq_map[course]:  
+                return prereq_map[course]
+            
+            for pre in graph[course]:
+                prereq_map[course].add(pre)
+                prereq_map[course].update(helper(pre))
+            
+            return prereq_map[course]
+
+        graph = [[] for _ in range(numCourses)]
+        for u, v in prerequisites:
+            graph[v].append(u)
+
+        for course in range(numCourses):
+            helper(course)
+
+        result = []
+        for u, v in queries:
+            result.append(u in prereq_map[v])
+        
+        return result
